@@ -4,6 +4,16 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
 export default function HomeScreen() {
+
+  const initializeModel = async (model:string = "baseModel") => {
+    try {
+      // init whisper model passing ,model id
+      console.log(`Initializing model: ${model}`);
+    } catch (error) {
+      console.error("Error initializing model:", error);
+    }// await loadModel();
+  }
+
   return (
     <ScrollView contentInsetAdjustmentBehavior='automatic'
       contentContainerStyle={{flex:1}}>
