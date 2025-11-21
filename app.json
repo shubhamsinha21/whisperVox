@@ -38,7 +38,11 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      ["expo-audio",
+    {
+      "microphonePermission": "Allow $(PRODUCT_NAME) to use the microphone to record audio for transcription."
+    }]
     ],
     "experiments": {
       "typedRoutes": true,
