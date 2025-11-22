@@ -2,7 +2,9 @@
 
 import { Directory, File, Paths } from "expo-file-system";
 import { DownloadProgressData, FileSystemDownloadResult, createDownloadResumable } from "expo-file-system/legacy";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import type { WhisperContext } from "whisper.rn/index.js";
+import { initWhisper } from "whisper.rn/index.js";
 
 
 export interface WhisperModel {
@@ -76,6 +78,10 @@ export function useWhisperModel() {
 
     const [isDownloading, setIsDownloading] = useState(false); // downloading state
     const [downloadProgress, setDownloadProgress] = useState<Record<string, number>>({}); // download progress by model ID
+
+    const [WhisperContext, setWhisperContext] = useState<WhisperContext | null>(null); // Whisper context coming from ⬆️
+    const [vadContext, setVadContext] = useState<any>(null);
+    const [CurrentModelId, setCurrentModelId] = useState<string | null>(null);
 
     async function getModelDirectory(){
         let documentsDirectory: Directory;
@@ -192,6 +198,21 @@ export function useWhisperModel() {
             // Download and initialize the model here
             const modelPath = await downloadModel(model); 
 
+            // Initialize whisper context from now
+            const context = await initWhisper({
+                filePath: modelPath,
+            });
+
+            // set state variable
+            setWhisperContext(context);
+            setCurrentModelId(modelId);
+            console.log(`Whisper context initialized for model: ${model.label}`);
+
+            // return
+            return {
+                WhisperContext: context, 
+                vadContext: null,
+            }
 
         } catch (error) {
             console.error("Error initializing model:", error);  
@@ -199,6 +220,47 @@ export function useWhisperModel() {
             setInitializingModel(false);
         }  
         
+    }
+
+    const getModelById = useCallback((modelId: string) => { 
+        return WHISPER_MODELS.find((m) => m.id === modelId); 
+    }, []); 
+
+    const getCurrentModel = useCallback(() => {
+        return CurrentModelId ? getModelById(CurrentModelId): null;
+    }, [CurrentModelId, getModelById]);
+
+    const isModelDownloaded = useCallback((modelId: string) => {
+        return modelFiles[modelId] !== undefined;
+    }, [modelFiles])
+
+    const getDownloadProgress = useCallback((modelId: string) => {
+        return downloadProgress[modelId] || 0;
+    }, [downloadProgress])
+
+
+    return {
+        // states
+        modelFiles,
+        isDownloading,
+        initializingModel,
+        WhisperContext,
+        vadContext,
+        CurrentModelId,
+
+        // actions
+        downloadModel,
+        initializeModel,
+        // resetWhisperContext,
+        // deleteModel,
+
+        // helpers
+        getModelById,
+        getCurrentModel,
+        isModelDownloaded,
+        getDownloadProgress,
+
+        availableModels: WHISPER_MODELS
     }
 }
 
