@@ -1,51 +1,185 @@
-# Welcome to your Expo app 👋
+# Whisper RN Local Transcription App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native + Expo project that brings **offline Whisper speech-to-text** to mobile devices using the **whisper.rn** native module. This app downloads Whisper models locally, initializes them on-device, and performs completely offline transcription.
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Features
 
-   ```bash
-   npm install
-   ```
+* 🎤 **Offline transcription** using whisper.rn
+* 📦 Local model downloading (base, small, medium, large)
+* 🧠 VAD (voice activity detection) support
+* 📊 Real‑time status updates (download %, initialized status, etc.)
+* ⚡ Designed for **Expo Dev Client** or **native builds** (NOT Expo Go)
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+## ⚠ Important Notes
 
-In the output, you'll find options to open the app in a
+### ❌ Whisper **does NOT run on Expo Go**
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+You must:
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+* Create an Expo Dev Client, or
+* Build a full native app
 
-## Get a fresh project
+Because `whisper.rn` is a native module and needs to be compiled.
 
-When you're ready, run:
+### ✅ Works on:
 
-```bash
-npm run reset-project
+* `expo-dev-client`
+* `eas build`
+* Bare React Native
+
+---
+
+## 📁 Project Structure
+
+```
+project-root/
+├── app/
+│   └── HomeScreen.tsx
+├── hooks/
+│   └── use-whisper-model.ts
+├── components/
+│   ├── themed-text.tsx
+│   └── themed-view.tsx
+├── README.md
+└── package.json
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## 🛠 Installation
 
-To learn more about developing your project with Expo, look at the following resources:
+### 1. Install dependencies
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```sh
+yarn install
+```
 
-## Join the community
+### 2. Install Expo Dev Client
 
-Join our community of developers creating universal apps.
+```sh
+yarn expo install expo-dev-client
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 3. Install whisper.rn
 
+```sh
+yarn add whisper.rn
+```
+
+### 4. Rebuild dev client (required for native modules)
+
+```sh
+yarn expo run:ios
+# or
+yarn expo run:android
+```
+
+---
+
+## ▶ Running the App
+
+Start Metro:
+
+```sh
+yarn expo start
+```
+
+Open using the **Dev Client**, NOT Expo Go.
+
+---
+
+## 🧩 Core Logic
+
+### Model Initialization Flow
+
+1. User opens the app
+2. `HomeScreen` calls `initializeWhisperModel("base")`
+3. `useWhisperModels`:
+
+   * Checks if the model already exists
+   * Downloads it if missing
+   * Loads the native Whisper model using whisper.rn
+4. Whisper is now **ready for offline transcription**
+
+---
+
+## 📌 Example: HomeScreen Code
+
+```ts
+useEffect(() => {
+  initializeModel();
+}, []);
+```
+
+This ensures the model is initialized on app load.
+
+---
+
+## 🧪 Testing
+
+* Make sure the dev client is installed
+* Use logs to confirm:
+
+```
+Model downloaded
+Model initialized successfully
+```
+
+---
+
+## 🐞 Common Errors
+
+### ❌ Error: `Native module 'whisper.rn' not available in this runtime (Expo Go)`
+
+Fix:
+
+* Do **NOT** open the app in Expo Go
+* Run:
+
+```sh
+yarn expo run:android
+yarn expo run:ios
+```
+
+* Then open in the newly installed **dev client**
+
+---
+
+## 📦 Build APK / IPA
+
+Using EAS:
+
+```sh
+yarn expo build:android
+```
+
+Or iOS:
+
+```sh
+yarn expo build:ios
+```
+
+---
+
+## 📝 Roadmap
+
+* [ ] Add UI for recording audio
+* [ ] Live speech-to-text view
+* [ ] Local storage for transcripts
+* [ ] Model selector (base → large)
+
+---
+
+## 🤝 Contributing
+
+Pull requests are welcome.
+
+---
+
+## 📄 License
+
+MIT
