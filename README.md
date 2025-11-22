@@ -18,21 +18,6 @@ A React Native + Expo project that brings **offline Whisper speech-to-text** to 
 
 ### ❌ Whisper **does NOT run on Expo Go**
 
-You must:
-
-* Create an Expo Dev Client, or
-* Build a full native app
-
-Because `whisper.rn` is a native module and needs to be compiled.
-
-### ✅ Works on:
-
-* `expo-dev-client`
-* `eas build`
-* Bare React Native
-* 
----
-
 ## 🧩 Core Logic
 
 ### Model Initialization Flow
